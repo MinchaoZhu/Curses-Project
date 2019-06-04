@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "snake.h": "c",
+        "curses.h": "c",
+        "signal.h": "c",
+        "time.h": "c",
+        "unistd.h": "c"
+    }
+}
