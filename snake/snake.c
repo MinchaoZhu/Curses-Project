@@ -26,6 +26,8 @@ int set_ticker(int n_msecs)
 
 
 void init(){
+    gameSpeed = BASETIME;
+    gameStat = RUN;
     // initialize the wall
     for(int i=0;i<COLS;++i){
         mvaddch(0,i,'#');
@@ -43,23 +45,27 @@ void init(){
     snake0.body[0].y = COLS/2;
     mvaddch(snake0.body[0].x,snake0.body[0].y,'>');
     //initialize food
-    genFood();
-    mvprintw(LINES-1,0,"Score: %d, press 'q' to quit\n", snake0.length);
+    genFood(0);
+    mvprintw(LINES-1,0,"Score: %d, press 'p' to pause, 'q' to quit, 'r' to reload game, 'wasd' to change direction\n", SCORE);
 }
 
-void genFood(){
+void genFood(int flag){
     bool valid=0;
-    do{ 
-        food.x = 1 + myRand(time(0))%(LINES-2);
-        food.y = 1 + myRand(time(0))%(COLS-1);
-        for(int i=0;i<snake0.length;++i){
-            if(snake0.body[i].x==food.x&&snake0.body[i].y==food.y){
-                valid=0;
-                break;
-            }
-            valid = 1;
+        if(flag==0){
+            srand(time(0));
         }
-    }while(!valid);
+        do{ 
+            food.x = 1 + rand()%(LINES-3);
+            food.y = 1 + rand()%(COLS-2);
+            for(int i=0;i<snake0.length;++i){
+                if(snake0.body[i].x==food.x&&snake0.body[i].y==food.y){
+                    valid=0;
+                    break;
+                }
+                valid = 1;
+            }
+        }while(!valid);
+    
     mvaddch(food.x,food.y,'$');
 }
 
@@ -106,18 +112,18 @@ void snakeMove(int signum){
     if(food.x==snake0.body[0].x&&food.y==snake0.body[0].y){
         snake0.length += 1;
         mvaddch(tailx,taily,'O');
-        genFood();
-        mvprintw(LINES-1,0,"Score: %d, press 'q' to quit\n", SCORE);
+        genFood(1);
+        mvprintw(LINES-1,0,"Score: %d, press 'p' to pause, 'q' to quit, 'r' to reload game, 'wasd' to change direction\n", SCORE);
     }
     else mvaddstr(tailx,taily," ");
     refresh();
     if(collision()){
         clear();
-        mvaddstr(LINES-1,0,"Game Over! Press 'q' to quit\n");
+        mvaddstr(LINES/2,COLS/2-23,"Game Over! Press 'q' to quit, 'r' to restart game.\n");
         refresh();
     }
-    int newtime = BASETIME/(1+10*(1-pow(2.73,-SCORE/20)));
-    set_ticker(newtime);
+    gameSpeed = BASETIME/(1+5*(1-pow(2.73,-(1.0*SCORE)/15.0)));
+    set_ticker(gameSpeed);
 }
 
 void snakeMoveSubFunc(){
@@ -134,7 +140,9 @@ void snakeMoveSubFunc(){
 }
 
 
+void blankFun(){
 
+}
 
 
 
